@@ -4,7 +4,7 @@
  
  Abstract:	Demonstrates internationalization and localization APIs
  
- Version:	1.0
+ Version:	1.1
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
  Apple Inc. ("Apple") in consideration of your agreement to the
@@ -44,7 +44,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ Copyright (C) 2008-2011 Apple Inc. All Rights Reserved.
  
  */
 
@@ -97,8 +97,10 @@ enum {
 		// We want to know when the table selection changes (so we can update the sentence view)
 		//	and when the locale changes (so we can update everything)
 		[ [ NSNotificationCenter defaultCenter ] addObserver:self selector:@selector(localeChanged:) name:NSCurrentLocaleDidChangeNotification object:nil ];
-		_timer = nil;
-		_mountains = nil;
+        
+        // We don't need to explicitly set our data members to nil; that happens automatically 
+		//  _timer = nil;
+		//  _mountains = nil;
 	}
 	return self;
 }
@@ -114,6 +116,8 @@ enum {
 		[ _timer invalidate ];
 		[ _timer release ];
 	}
+    
+    [ _mountains release ];
 
 	// Never forget this!
 	[ super dealloc ];
@@ -182,6 +186,11 @@ enum {
 	[ self resetSentence ];
 }
 
+- (void)tableView:(NSTableView *)aTableView sortDescriptorsDidChange:(NSArray *)oldDescriptors
+{
+	[ aTableView reloadData ];
+}
+
 // Notification target functions
 - (void)tableSelectionChanged:(id)notification
 {
@@ -192,8 +201,8 @@ enum {
 {
 	
 	NSLocale *locale = [ self localeLanguageComboWithCalendar ];
-	NSLog( [ locale displayNameForKey:NSLocaleCalendar value:[ [ self calendar ] calendarIdentifier ] ] );
-	NSLog( [ locale displayNameForKey:NSLocaleCalendar value:[ self calendar ] ] );
+	NSLog( @"The locale has changed, the new calendar identifier is %@", [ locale displayNameForKey:NSLocaleCalendar value:[ [ self calendar ] calendarIdentifier ] ] );
+	NSLog( @"The new calendar is %@", [ locale displayNameForKey:NSLocaleCalendar value:[ self calendar ] ] );
 
 	[ self resetAll ];
 }
@@ -331,6 +340,8 @@ enum {
 		[ formatter setNumberStyle:NSNumberFormatterDecimalStyle ];
 		
 		returnValue = [ NSString stringWithFormat:format, [ formatter stringFromNumber:[ NSNumber numberWithInteger:height ] ] ];
+        
+        [ formatter release ];
 	}
 	return returnValue;
 }
@@ -345,6 +356,7 @@ enum {
 		[ formatter setTimeStyle:NSDateFormatterNoStyle ];
 		[ formatter setLocale:[ self localeLanguageComboWithCalendar ] ];
 		returnValue = [ formatter stringFromDate:date ];
+        [ formatter release ];
 	}
 	// We leave this in just to demonstrate that descriptionWithLocale does the right thing
 	NSLog( @"%@ => %@", [ date descriptionWithLocale:[ self localeLanguageComboWithCalendar ] ], returnValue );

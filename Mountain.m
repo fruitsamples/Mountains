@@ -5,7 +5,7 @@
  Abstract:	A simple class with three fields used to make the auto-sorting
 			in an NSTableView straightforward
  
- Version:	1.0
+ Version:	1.1
  
  Disclaimer: IMPORTANT:  This Apple software is supplied to you by 
  Apple Inc. ("Apple") in consideration of your agreement to the
@@ -45,7 +45,7 @@
  STRICT LIABILITY OR OTHERWISE, EVEN IF APPLE HAS BEEN ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
  
- Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ Copyright (C) 2008-2011 Apple Inc. All Rights Reserved.
  
  */
 
@@ -127,6 +127,7 @@
 		[ formatter setTimeStyle:NSDateFormatterNoStyle ];
 		[ formatter setLocale:locale ];
 		returnValue = [ NSString stringWithFormat:@"%@-%@-%@", self.name, self.height, [ formatter stringFromDate:self.climbedDate ] ];
+		[ formatter release ];
 	}
 	else {
 		returnValue = [ NSString stringWithFormat:@"%@-%@", self.name, self.height ];
